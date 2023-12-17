@@ -2,8 +2,13 @@ package com.example.dev_200_1_network_client_data_storage_system_jpa.servlets;
 
 
 import com.example.dev_200_1_network_client_data_storage_system_jpa.beans.ReturningErrors;
+import com.example.dev_200_1_network_client_data_storage_system_jpa.beans.SelectBean;
 import com.example.dev_200_1_network_client_data_storage_system_jpa.beans.UpdateBean;
+import com.example.dev_200_1_network_client_data_storage_system_jpa.dto.AddressDto;
+import com.example.dev_200_1_network_client_data_storage_system_jpa.dto.ClientDto;
 import com.example.dev_200_1_network_client_data_storage_system_jpa.security.AuthorizationBean;
+import com.example.dev_200_1_network_client_data_storage_system_jpa.service.AddressService;
+import com.example.dev_200_1_network_client_data_storage_system_jpa.service.ClientService;
 import jakarta.ejb.EJB;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -22,7 +27,10 @@ public class Update extends HttpServlet {
     private AuthorizationBean authorizationBean;
     @EJB
     private UpdateBean updateBean;
-
+    @EJB
+    private AddressService addressService;
+    @EJB
+    private ClientService clientService;
 
     private String strId;
     private String macAdr;
@@ -49,25 +57,25 @@ public class Update extends HttpServlet {
         out.println("<div style=\"margin: 15px; padding: 15px; border: 1px solid black; border-radius: 15px;\">");
     }
 
-    private void getBodyAddress(PrintWriter out) {
-        out.println("<h2>Введите информацию об адресе клиента</h2><div>");
-        out.println("сетевой адрес устройства (IP): <input name=\"clientIp\"><br>");
-        out.println("физический адрес устройства (MAC): <input name=\"clientMac\"><br>");
-        out.println("модель устройства:<input name=\"clientModel\"><br>");
-        out.println("адрес места нахождения:<input name=\"clientAddress\"><br>");
-        out.println("</div></div></div>");
-    }
-
     private void getPageUpdateClientData(PrintWriter out, HttpServletRequest request, HttpServletResponse response) {
         getHead(out);
         out.println("<h1 style=\"text-align: center\">Обновление данных о клиенте</h1>");
         getBody(out, request);
         out.println("<h2>Введите информацию о клиенте</h2><div>");
-        out.println("наименование клиента: <input name=\"clientName\"><br>");
+        ClientDto cli = clientService.findByClientId(Integer.parseInt(strId));
+        out.println("наименование клиента: <input name=\"clientName\" value=\"" + cli.getClientName() + "\"><br>");
         out.println("тип клиента: <select name=\"clientType\">");
         out.println("<option>--> Выберите тип <--</option>");
-        out.println("<option>Юридическое лицо</option>");
-        out.println("<option>Физическое лицо</option>");
+        if (cli.getType().equals("Юридическое лицо")) {
+            out.println("<option selected=\"selected\">Юридическое лицо</option>");
+        } else {
+            out.println("<option>Юридическое лицо</option>");
+        }
+        if (cli.getType().equals("Физическое лицо")) {
+            out.println("<option selected=\"selected\">Физическое лицо</option>");
+        } else {
+            out.println("<option>Физическое лицо</option>");
+        }
         out.println("</select><br><br>");
         out.println("<button type=\"submit\" name=\"UpdateDataClient\">Изменить данные клиента</button><br><br>");
         out.println("<button type=\"reset\">Очистить введенные данные</button></div></div>");
@@ -78,7 +86,13 @@ public class Update extends HttpServlet {
         getHead(out);
         out.println("<h1 style=\"text-align: center\">Обновление данных о адресе</h1>");
         getBody(out, request);
-        getBodyAddress(out);
+        out.println("<h2>Введите информацию об адресе клиента</h2><div>");
+        AddressDto addr = addressService.findByAddressMac(macAdr);
+        out.println("сетевой адрес устройства (IP): <input name=\"clientIp\" value=\"" + addr.getIp() + "\"><br>");
+        out.println("физический адрес устройства (MAC): <input name=\"clientMac\" value=\"" + addr.getMac() + "\"><br>");
+        out.println("модель устройства:<input name=\"clientModel\" value= \"" + addr.getModel() + "\"><br>");
+        out.println("адрес места нахождения:<input name=\"clientAddress\" value=\"" + addr.getAddress() + "\"><br>");
+        out.println("</div></div></div>");
         out.println("<button type=\"submit\" name=\"UpdateClientAddress\">Обновить адрес</button><br><br>");
         out.println("<button type=\"reset\">Очистить введенные данные</button>");
         out.println("</form></body></html>");
@@ -89,7 +103,12 @@ public class Update extends HttpServlet {
         getHead(out);
         out.println("<h1 style=\"text-align: center\">Добавление адреса клиенту</h1>");
         getBody(out, request);
-        getBodyAddress(out);
+        out.println("<h2>Введите информацию об адресе клиента</h2><div>");
+        out.println("сетевой адрес устройства (IP): <input name=\"clientIp\"><br>");
+        out.println("физический адрес устройства (MAC): <input name=\"clientMac\"><br>");
+        out.println("модель устройства:<input name=\"clientModel\"><br>");
+        out.println("адрес места нахождения:<input name=\"clientAddress\"><br>");
+        out.println("</div></div></div>");
         out.println("<button type=\"submit\" name=\"CreateClientAddress\">Добавить адрес</button><br><br>");
         out.println("<button type=\"reset\">Очистить введенные данные</button>");
         out.println("</form></body></html>");

@@ -8,7 +8,7 @@ import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 @Singleton
-public class ClientRepositoryImplementation implements ClientRepository {
+public class ClientRepositoryImpl implements ClientRepository {
 
     @PersistenceContext
     private EntityManager em;

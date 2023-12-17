@@ -25,9 +25,15 @@ public class ValidatorBean {
         return false;
     }
 
-    public boolean validateAddressList(String ip, String mac, String model, String address) throws ServletException, IOException {
+    public boolean validateAddressListWithMac(String ip, String mac, String model, String address) throws ServletException, IOException {
         if (validateAddress(ip, 25, ErrorFieldType.CLIENT_IP.getType(), true, false) &&
                 validateAddress(mac, 20, ErrorFieldType.CLIENT_MAC.getType(), false, true) &&
+                validateAddress(model, 100, ErrorFieldType.CLIENT_MODEL.getType(), false, false) &&
+                validateAddress(address, 200, ErrorFieldType.CLIENT_ADDRESS.getType(), false, false)) return true;
+        return false;
+    }
+    public boolean validateAddressListNotMac(String ip, String model, String address) throws ServletException, IOException {
+        if (validateAddress(ip, 25, ErrorFieldType.CLIENT_IP.getType(), true, false) &&
                 validateAddress(model, 100, ErrorFieldType.CLIENT_MODEL.getType(), false, false) &&
                 validateAddress(address, 200, ErrorFieldType.CLIENT_ADDRESS.getType(), false, false)) return true;
         return false;

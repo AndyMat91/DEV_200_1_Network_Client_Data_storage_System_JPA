@@ -8,7 +8,7 @@ import jakarta.persistence.PersistenceContext;
 import java.util.List;
 
 @Singleton
-public class AddressRepositoryImplementation implements AddressRepository {
+public class AddressRepositoryImpl implements AddressRepository {
     @PersistenceContext
     private EntityManager em;
 

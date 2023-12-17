@@ -33,21 +33,25 @@ public class SelectBean {
     public List<ClientAddressDto> findAllClientWithNameOrAddress(String data) {
         List<ClientAddressDto> list = new ArrayList<>();
         clientRepository.findAllClient().forEach(client -> {
-            if (client.getAddresses() != null && !client.getAddresses().isEmpty() && data != null && !data.equals("")) {
-                if (client.getClientName().equals(data)) {
-                    client.getAddresses().forEach(clientAdr -> list.add(new ClientAddressDto(ClientDto.getClientDtoByEntity(client), AddressDto.getAddressDtoByEntity(clientAdr))));
-                } else if (client.getAddresses()
+            if (client.getAddresses() != null && !client.getAddresses().isEmpty() && data != null && !data.isEmpty()) {
+                if (client.getClientName().toLowerCase().contains(data.toLowerCase())) {
+                    client.getAddresses().forEach(clientAdr -> list.add
+                            (new ClientAddressDto(ClientDto.getClientDtoByEntity(client)
+                                    , AddressDto.getAddressDtoByEntity(clientAdr))));
+                }  if (client.getAddresses()
                         .stream()
                         .map(AddressEntity::getAddress)
-                        .anyMatch(data::equals)) {
+                        .anyMatch(d -> d.toLowerCase().contains(data.toLowerCase()))) {
                     client.getAddresses().forEach(clientAdr -> {
-                        if (clientAdr.getAddress().equals(data)) {
-                            list.add(new ClientAddressDto(ClientDto.getClientDtoByEntity(client), AddressDto.getAddressDtoByEntity(clientAdr)));
+                        if (clientAdr.getAddress().toLowerCase().contains(data.toLowerCase())) {
+                            list.add(new ClientAddressDto(ClientDto.getClientDtoByEntity(client)
+                                    , AddressDto.getAddressDtoByEntity(clientAdr)));
                         }
                     });
                 }
             } else {
-                client.getAddresses().forEach(clientAdr -> list.add(new ClientAddressDto(ClientDto.getClientDtoByEntity(client), AddressDto.getAddressDtoByEntity(clientAdr))));
+                client.getAddresses().forEach(clientAdr -> list.add(new ClientAddressDto(ClientDto.getClientDtoByEntity(client),
+                        AddressDto.getAddressDtoByEntity(clientAdr))));
             }
         });
         return list;
@@ -55,7 +59,7 @@ public class SelectBean {
 
     public List<ClientAddressDto> findAllClientWithType(String type, List<ClientAddressDto> list) {
         List<ClientAddressDto> newList = new ArrayList<>();
-        if (type != null && !type.equals("") && !type.equals("--> Выберите тип <--")) {
+        if (type != null && !type.isEmpty() && !type.equals("--> Выберите тип <--")) {
             List<ClientAddressDto> finalNewList = newList;
             list.forEach(client -> {
                 if (client.getType().equals(type)) {

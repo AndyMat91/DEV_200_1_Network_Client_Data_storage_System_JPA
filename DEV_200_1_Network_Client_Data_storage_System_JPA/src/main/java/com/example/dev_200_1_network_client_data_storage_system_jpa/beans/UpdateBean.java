@@ -10,6 +10,7 @@ import com.example.dev_200_1_network_client_data_storage_system_jpa.service.Clie
 import jakarta.ejb.EJB;
 import jakarta.ejb.Stateless;
 import jakarta.servlet.ServletException;
+import jakarta.transaction.Transactional;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -49,8 +50,15 @@ public class UpdateBean {
         }
     }
 
+    @Transactional
     public boolean updateAddress(String clientId, String mac, String newMac, String ip, String model, String address) throws ServletException, IOException {
-        boolean validateClienResult = validatorBean.validateAddressList(ip, newMac, model, address);
+        boolean validateClienResult;
+       if(mac.equals(newMac))
+       {
+           validateClienResult = validatorBean.validateAddressListNotMac(ip, model, address);
+       } else {
+           validateClienResult = validatorBean.validateAddressListWithMac(ip,newMac,model,address);
+       }
         if (validateClienResult) {
             ClientEntity clientEntity = clientRepository.findByClientId(Integer.parseInt(clientId));
             AddressEntity addressEntity = new AddressEntity();
@@ -83,7 +91,7 @@ public class UpdateBean {
 
     public boolean createClient(String name, String type, String ip, String mac, String model, String address) throws ServletException, IOException {
         boolean validateClienResult = validatorBean.validateClientList(name, type);
-        boolean validateAddressResult = validatorBean.validateAddressList(ip, mac, model, address);
+        boolean validateAddressResult = validatorBean.validateAddressListWithMac(ip, mac, model, address);
         if (validateClienResult && validateAddressResult) {
             AddressEntity addressEntity = new AddressEntity();
             addressEntity.setIp(ip);
@@ -96,11 +104,8 @@ public class UpdateBean {
             clientEntity.setAdded(Instant.now());
             addressEntity.setClient(clientEntity);
             clientEntity.setAddresses(new LinkedHashSet<>(Collections.singletonList(addressEntity)));
-            System.out.println("Вызываю метод getClientEntityByDto");
             clientRepository.create(clientEntity);
-            System.out.println("Вызываю метод getAddressEntityByDto");
             addressRepository.create(addressEntity);
-            System.out.println("Конец метода getAddressEntityByDto");
             return true;
         } else {
             return false;
@@ -108,7 +113,7 @@ public class UpdateBean {
     }
 
     public boolean createAddress(String id, String ip, String mac, String model, String address) throws ServletException, IOException {
-        boolean validateAddressResult = validatorBean.validateAddressList(ip, mac, model, address);
+        boolean validateAddressResult = validatorBean.validateAddressListWithMac(ip, mac, model, address);
         if (validateAddressResult) {
             ClientEntity clientEntity = clientRepository.findByClientId(Integer.parseInt(id));
             AddressEntity addressEntity = new AddressEntity();

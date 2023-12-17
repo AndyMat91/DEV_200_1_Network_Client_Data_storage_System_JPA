@@ -15,9 +15,6 @@ public class AddressService {
     private AddressRepository addressRepository;
 
     public AddressDto findByAddressMac(String mac) {
-        System.out.println(mac);
-        System.out.println(addressRepository.findByAddressMac(mac));
-        System.out.println(AddressDto.getAddressDtoByEntity(addressRepository.findByAddressMac(mac)));
         return AddressDto.getAddressDtoByEntity(addressRepository.findByAddressMac(mac));
     }
 
